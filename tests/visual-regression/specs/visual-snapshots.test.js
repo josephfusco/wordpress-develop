@@ -163,4 +163,72 @@ test.describe( 'Admin Visual Snapshots', () => {
 			mask: elementsToHide.map( ( selector ) => page.locator( selector ) ),
 		});
 	} );
+
+	test( 'Dashboard', async ({ admin, page }) => {
+		await admin.visitAdminPage( '/index.php' );
+		await expect( page ).toHaveScreenshot( 'Dashboard.png', {
+			mask: elementsToHide.map( ( selector ) => page.locator( selector ) ),
+		});
+	} );
+
+	test( 'Themes', async ({ admin, page }) => {
+		await admin.visitAdminPage( '/themes.php' );
+		await expect( page ).toHaveScreenshot( 'Themes.png', {
+			mask: [
+				...elementsToHide,
+				'.theme-screenshot img',
+			].map( ( selector ) => page.locator( selector ) ),
+		});
+	} );
+
+	test( 'General Settings', async ({ admin, page }) => {
+		await admin.visitAdminPage( '/options-general.php' );
+		await expect( page ).toHaveScreenshot( 'General Settings.png', {
+			mask: elementsToHide.map( ( selector ) => page.locator( selector ) ),
+		});
+	} );
+
+	test( 'Writing Settings', async ({ admin, page }) => {
+		await admin.visitAdminPage( '/options-writing.php' );
+		await expect( page ).toHaveScreenshot( 'Writing Settings.png', {
+			mask: elementsToHide.map( ( selector ) => page.locator( selector ) ),
+		});
+	} );
+
+	test( 'Permalink Settings', async ({ admin, page }) => {
+		await admin.visitAdminPage( '/options-permalink.php' );
+		await expect( page ).toHaveScreenshot( 'Permalink Settings.png', {
+			mask: elementsToHide.map( ( selector ) => page.locator( selector ) ),
+		});
+	} );
+
+	test( 'Add New Post', async ({ admin, page }) => {
+		await admin.visitAdminPage( '/post-new.php' );
+		await expect( page ).toHaveScreenshot( 'Add New Post.png', {
+			mask: [
+				...elementsToHide,
+				'#wp-content-editor-container',
+			].map( ( selector ) => page.locator( selector ) ),
+		});
+	} );
+
+	test( 'Edit Post', async ({ admin, page, requestUtils }) => {
+		const post = await requestUtils.rest( {
+			method: 'POST',
+			path: '/wp/v2/posts',
+			data: {
+				title: 'Visual Regression Test Post',
+				content: 'Test content for visual regression.',
+				status: 'publish',
+			},
+		} );
+
+		await admin.visitAdminPage( '/post.php', `post=${ post.id }&action=edit` );
+		await expect( page ).toHaveScreenshot( 'Edit Post.png', {
+			mask: [
+				...elementsToHide,
+				'#wp-content-editor-container',
+			].map( ( selector ) => page.locator( selector ) ),
+		});
+	} );
 } );
